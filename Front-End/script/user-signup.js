@@ -39,7 +39,7 @@ async function sendUserDetails() {
       if (details.request.status === 201 && details.data.userExist === false) {
         window.location.href = "../views/login.html";
       } 
-      else if (details.data.userExist == true){
+      else if (details.data.userExist == true){        
         throw new Error("User already exist");
       }
       else{
