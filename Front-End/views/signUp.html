@@ -22,6 +22,7 @@
     <div class="h-100 d-flex align-items-center justify-content-center">
       <form class="form-select-lg">
         <h2 class="form-select-lg "> Fill the form to register</h2>
+        <div class="" id="userStatus"></div>
         <div class="mb-3">
           <label class="form-control-plaintext" for="Name">Name:</label>
           <input class="form-control-lg" type="text" id="name" />
@@ -35,20 +36,18 @@
           <label class="form-control-plaintext" for="password" "
             >Enter Password:</label
           >
-          <input class="form-control-lg" type="password" onkeyup="checkPassword()" id="password" >
+          <input class="form-control-lg" type="password"  id="password" >
         </div>
         <div class="mb-2">
           <label class="form-control-plaintext" for="password"
             >Re-enter Password:</label
           >
-          <input class="form-control-lg" type="password" name="" onkeyup="checkPassword()"
+          <input class="form-control-lg" type="password" name="" 
           id="rePassword">
-          <div  id="confirmPassword" style="visibility: hidden; color: green;"  >
-            <h4>Password matches</h4>
-          </div>          
+          
         </div>
         <div class="mb-3">
-          <input type="button" disabled value="Submit" id="submit"/>
+          <input type="button" value="Submit" id="submit"/>
         </div>
       </form>
     </div>
