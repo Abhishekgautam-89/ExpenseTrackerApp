@@ -19,21 +19,16 @@ async function getUserDetails(){
 
     try{
         const details = await axios.post(`http://localhost:3000/user/login`,userDetails)
-        // console.log(details);
-        if(details.data.userExist){
-            if(details.data.login){
-                window.alert('Login Successfull');
-            }
-            else{
-                window.alert('User Details In-correct')
-            }
-        }
-        else {
-            window.alert('User not registered')
-        }
+        // console.log(details);       
+         window.alert('Login Successfull'); 
     }
     catch(err){
-        console.log(err);
+        if (err.response.status==401){
+            window.alert('User Details In-correct')
+        }
+        else if(err.response.status==404) {
+            window.alert('User not registered')
+        }
     }
 }
 
