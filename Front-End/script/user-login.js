@@ -21,6 +21,7 @@ async function getUserDetails(){
         const details = await axios.post(`http://localhost:3000/user/login`,userDetails)
         // console.log(details);       
          window.alert('Login Successfull'); 
+         window.location.href='../views/index.html'
     }
     catch(err){
         if (err.response.status==401){
