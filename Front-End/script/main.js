@@ -1,6 +1,7 @@
 const submit = document.getElementById("submit");
 const editBtn = document.getElementById("edit");
 
+
 document.addEventListener("DOMContentLoaded", async (e) => {
   // localStorage.getItem();
   // Object.keys(localStorage).forEach(key=>{
@@ -8,8 +9,10 @@ document.addEventListener("DOMContentLoaded", async (e) => {
   //     let parsedData = JSON.parse(originalData);
   //     addDatatoList(parsedData);
   // });
+  const token = localStorage.getItem('token');
+  // console.log(token);
   try {
-    const getObject = await axios.get("http://localhost:3000/expense");
+    const getObject = await axios.get("http://localhost:3000/getexpense",{headers: {'Authorization': token}});
     // console.log(getObject.data.allExpense)
     for (var i = 0; i < getObject.data.allExpense.length; i++) {
       addDatatoList(getObject.data.allExpense[i]);
@@ -34,7 +37,8 @@ submit.addEventListener("click", async (e) => {
   // localStorage.setItem(description, JSON.stringify(obj));
   addDatatoList(obj);
   try {
-    let postObject = await axios.post("http://localhost:3000/expense", obj);
+    const token = localStorage.getItem('token');
+    let postObject = await axios.post("http://localhost:3000/addexpense", obj, {headers: {'Authorization': token}});
     // console.log(postObject.data);
     addDatatoList(postObject.data);
   } catch (error) {
@@ -84,8 +88,9 @@ async function deleteList(id) {
   // li.remove();
   console.log('delete-clicked')
   try {
+    const token = localStorage.getItem('token');
     // console.log(obj.id);
-    const delObj = await axios.delete(`http://localhost:3000/delete/${id}`);
+    const delObj = await axios.delete(`http://localhost:3000/delete/${id}`, {headers: {'Authorization': token}});
     li.remove();
   } catch (error) {
     console.log(error);

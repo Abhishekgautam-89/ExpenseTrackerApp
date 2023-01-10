@@ -1,5 +1,6 @@
 const User = require('../model/user')
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 exports.addUser = (req,res,next)=>{
     const userName = req.body.userName;
@@ -44,7 +45,7 @@ exports.loginUser = async(req, res, next)=>{
                 throw new Error('something went wrong')
             }
             if(result===true){ 
-                res.status(201).json({userExist: true, login: true})
+                res.status(201).json({userExist: true, login: true, token: generateToken(user[0].id, user[0].name)})
                 }
             else{
              return res.status(401).json({userExist: true, login:false})
@@ -61,4 +62,8 @@ exports.loginUser = async(req, res, next)=>{
         res.status(500).json({err});
     }
     
+}
+
+function generateToken(id, name){
+   return jwt.sign({userId: id, userName: name}, "abchjhsadhljasd")
 }
