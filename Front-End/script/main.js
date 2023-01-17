@@ -1,14 +1,9 @@
 const submit = document.getElementById("submit");
 const editBtn = document.getElementById("edit");
-
+const rzb = document.getElementById('rzp-button');
 
 document.addEventListener("DOMContentLoaded", async (e) => {
-  // localStorage.getItem();
-  // Object.keys(localStorage).forEach(key=>{
-  //     let originalData = localStorage.getItem(key);
-  //     let parsedData = JSON.parse(originalData);
-  //     addDatatoList(parsedData);
-  // });
+
   const token = localStorage.getItem('token');
   // console.log(token);
   try {
@@ -22,6 +17,8 @@ document.addEventListener("DOMContentLoaded", async (e) => {
   }
 });
 
+rzb.addEventListener('click', buyPremium);
+
 submit.addEventListener("click", async (e) => {
   e.preventDefault();
   const expense = document.getElementById("expense").value;
@@ -34,7 +31,6 @@ submit.addEventListener("click", async (e) => {
     option: selectValue,
   };
 
-  // localStorage.setItem(description, JSON.stringify(obj));
   addDatatoList(obj);
   try {
     const token = localStorage.getItem('token');
@@ -49,7 +45,7 @@ submit.addEventListener("click", async (e) => {
 function addDatatoList(obj) {
   var list = document.getElementById("expenseList");
   var li = document.createElement("li");
-//   var edit = document.createElement("button");
+//var edit = document.createElement("button");
   var del = document.createElement("button");
 
   li.appendChild(
@@ -84,12 +80,11 @@ function addDatatoList(obj) {
 }
 
 async function deleteList(id) {
-  // localStorage.removeItem(obj.description);
-  // li.remove();
-  console.log('delete-clicked')
+ 
+  // console.log('delete-clicked')
   try {
     const token = localStorage.getItem('token');
-    // console.log(obj.id);
+    
     const delObj = await axios.delete(`http://localhost:3000/delete/${id}`, {headers: {'Authorization': token}});
     li.remove();
   } catch (error) {
@@ -120,3 +115,35 @@ async function editList(id) {
     console.log(error);
   }
 }
+
+async function buyPremium(){
+  try{
+    const token = localStorage.getItem('token');
+    const res = await axios.get('http://localhost:3000/getPremium', {headers:{'Authorization': token}})
+    // console.log(res);
+    var options = {
+      'keys' : res.data.key_id,
+      'order_id': res.data.order.id,
+      'handler': async (response)=>{
+        // console.log(options.order_id);
+        await axios.post('http://localhost:3000/updateStatus',{
+          order_id:options.order_id,
+          payment_id: response.razorpay_payment_id
+        }, {headers:{'Authorization': token}})
+      alert('you are a premium user now');
+      }
+    }
+    const rzp = new Razorpay(options);
+    rzp.open();
+
+    rzp.on('payment.failed', function(response){
+      console.log(response);
+      alert('something went wrong');
+    })
+  }
+  catch(err){
+    console.log(err);
+    }
+}
+
+

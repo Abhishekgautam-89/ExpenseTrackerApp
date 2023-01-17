@@ -59,11 +59,12 @@ exports.loginUser = async(req, res, next)=>{
         
     }
     catch(err){
+        console.log(err);
         res.status(500).json({err});
     }
     
 }
 
 function generateToken(id, name){
-   return jwt.sign({userId: id, userName: name}, "abchjhsadhljasd")
+   return jwt.sign({userId: id, userName: name}, process.env.private_key)
 }
