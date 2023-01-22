@@ -17,8 +17,12 @@
       integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
       crossorigin="anonymous"
     ></script>
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
+    <div class="main">
+      <button id="logout">Log Out</button>
+      <div class="form">  
     <div class="h-100 d-flex align-items-lg-center justify-content-center">
       <label class="form-check-label">Choose Expense Amount</label>
       <input class="input-group-text" type="text" name="expense" id="expense" />
@@ -44,10 +48,23 @@
         value="Add Expense"
         id="submit"
       />
-      <!-- <input type="submit" value="Edit" id="edit" disabled="true" /> -->
-      <ul id="expenseList"></ul>
-      <button class="btn-link" id="rzp-button">Get Membership</button>
     </div>
+      <!-- <input type="submit" value="Edit" id="edit" disabled="true" /> -->
+            
+          <button class="btn-link" id="rzp-button">Get Membership</button>
+          <h5 style="display:none;"id="display">You are a Premium user</h5>
+          <button class="btn-link" id="leaderboard" style="display: none;" >Show LeaderBoard</button>
+          <hr>
+          <ul id="expenseList">
+            <!-- <li>home</li>
+            <li>home</li>
+            <li>home</li> -->
+          </ul>
+          <hr>
+          <ul id="leaderBoard"></ul>
+        </div>   
+    </div>   
+    
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>

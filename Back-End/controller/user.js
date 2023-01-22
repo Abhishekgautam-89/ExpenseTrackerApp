@@ -2,7 +2,7 @@ const User = require('../model/user')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-exports.addUser = (req,res,next)=>{
+const addUser = (req,res,next)=>{
     const userName = req.body.userName;
     const userEmail= req.body.userEmail;
     const userPassword = req.body.userPassword;
@@ -32,7 +32,7 @@ exports.addUser = (req,res,next)=>{
     }
 }
 
-exports.loginUser = async(req, res, next)=>{
+const loginUser = async(req, res, next)=>{
     const email= req.body.userEmail;
     const password = req.body.userPassword;
     
@@ -45,7 +45,7 @@ exports.loginUser = async(req, res, next)=>{
                 throw new Error('something went wrong')
             }
             if(result===true){ 
-                res.status(201).json({userExist: true, login: true, token: generateToken(user[0].id, user[0].name)})
+                res.status(201).json({userExist: true, login: true, token: generateToken(user[0].id, user[0].name, user[0].isPremium)})
                 }
             else{
              return res.status(401).json({userExist: true, login:false})
@@ -65,6 +65,11 @@ exports.loginUser = async(req, res, next)=>{
     
 }
 
-function generateToken(id, name){
-   return jwt.sign({userId: id, userName: name}, process.env.private_key)
+ const generateToken=(id, name, isPremium)=>{
+   return jwt.sign({userId: id, userName: name, isPremium: isPremium}, process.env.private_key)
 }
+module.exports={
+    loginUser,
+    addUser,
+    generateToken
+};

@@ -1,23 +1,50 @@
+
+const logOut = document.getElementById('logout');
 const submit = document.getElementById("submit");
 const editBtn = document.getElementById("edit");
 const rzb = document.getElementById('rzp-button');
+const leaderBoardButton = document.getElementById('leaderboard');
 
 document.addEventListener("DOMContentLoaded", async (e) => {
 
   const token = localStorage.getItem('token');
-  // console.log(token);
+  const decodedToken = parseJwt(token);
+  // console.log(decodedToken);
   try {
     const getObject = await axios.get("http://localhost:3000/getexpense",{headers: {'Authorization': token}});
-    // console.log(getObject.data.allExpense)
+    // console.log(getObject)
     for (var i = 0; i < getObject.data.allExpense.length; i++) {
       addDatatoList(getObject.data.allExpense[i]);
     }
+
+    if (decodedToken.isPremium===true){
+      rzb.style.display='none';
+      document.getElementById('display').style.display='block';
+      document.getElementById('leaderboard').style.display='block';
+    }
+
   } catch (reject) {
     console.log(`Something goes wrong and gives this error: ${reject} `);
   }
 });
 
+function parseJwt (token) {
+  var base64Url = token.split('.')[1];
+  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+
+  return JSON.parse(jsonPayload);
+}
+
 rzb.addEventListener('click', buyPremium);
+leaderBoardButton.addEventListener('click', leaderBoard);
+
+logOut.addEventListener('click', ()=>{
+  localStorage.removeItem('token');
+  window.location.href('../views/login.html');
+})
 
 submit.addEventListener("click", async (e) => {
   e.preventDefault();
@@ -126,11 +153,14 @@ async function buyPremium(){
       'order_id': res.data.order.id,
       'handler': async (response)=>{
         // console.log(options.order_id);
-        await axios.post('http://localhost:3000/updateStatus',{
+        const res = await axios.post('http://localhost:3000/updateStatus',{
           order_id:options.order_id,
           payment_id: response.razorpay_payment_id
         }, {headers:{'Authorization': token}})
       alert('you are a premium user now');
+      rzb.style.display='none';
+      document.getElementById('display').style.display='block';
+      localStorage.setItem('token', res.data.token)
       }
     }
     const rzp = new Razorpay(options);
@@ -146,4 +176,28 @@ async function buyPremium(){
     }
 }
 
+async function leaderBoard(){
+  try{
+    const token = localStorage.getItem('token');
+    const data = await axios.get('http://localhost:3000/premium/showLeaderboard',{headers:{'Authorization': token}} );
+    // console.log(data.data.expense);
+    const lists=data.data.expense;
+    lists.forEach(list => {
+      leaderBoardOnScreen(list);
+    });
+    
+  }
+  catch(err){
+    console.log(err);
+  }
+}
 
+function leaderBoardOnScreen(data){
+  // console.log(data);
+  const ul = document.getElementById('leaderBoard');
+  const li = document.createElement("li");
+  li.appendChild(
+    document.createTextNode(`Name: ${data.name}   Expense: ${data.expense}`)
+  );
+  ul.appendChild(li);
+}

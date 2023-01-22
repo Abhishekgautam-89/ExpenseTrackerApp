@@ -9,6 +9,7 @@ const dotenv = require('dotenv');
 const getExpenseroute = require('./routes/expenseAdded')
 const getUser = require('./routes/user')
 const buyPremium = require('./routes/purchase')
+const premium = require('./routes/premium');
 
 // models
 const User = require('./model/user');
@@ -29,6 +30,7 @@ app.use(cors());
 app.use('/',getExpenseroute);
 app.use('/',getUser);
 app.use('/',buyPremium);
+app.use('/premium', premium);
 
 User.hasMany(Expenses);
 Expenses.belongsTo(User);
