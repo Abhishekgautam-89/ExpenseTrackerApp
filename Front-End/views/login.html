@@ -34,6 +34,8 @@
           </div>         
           <div class="mb-3">
             <input type="button" value="Login" id="login"/>
+            <input type="button"  id="forgotPassword" value="Forgot Password" onclick="redirect()">
+            
           </div>
           <div class="mb-3">
             <label class="form-control-plaintext" for="Email">New User, Click To Register:</label>
@@ -43,5 +45,10 @@
       </div>
     <script src="../script/user-login.js"></script>
     <script src="https://unpkg.com/axios@1.1.2/dist/axios.min.js"></script>
+    <script>
+      function redirect(){
+        window.location.href = './forgotpassword.html'
+      }
+    </script>
 </body>
 </html>
