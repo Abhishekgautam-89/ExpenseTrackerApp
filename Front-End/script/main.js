@@ -193,11 +193,11 @@ async function leaderBoard(){
 }
 
 function leaderBoardOnScreen(data){
-  // console.log(data);
+  console.log(data);
   const ul = document.getElementById('leaderBoard');
   const li = document.createElement("li");
   li.appendChild(
-    document.createTextNode(`Name: ${data.name}   Expense: ${data.expense}`)
+    document.createTextNode(`Name: ${data.name}   Expense: ${data.total_expense}`)
   );
   ul.appendChild(li);
 }

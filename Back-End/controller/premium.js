@@ -1,28 +1,25 @@
 const Users = require('../model/user');
 const Expenses = require('../model/expense');
+const sequelize = require('../util/database');
 
 
 const showLeaderboard = async (req, res)=>{
     try{
         // console.log(req.user);
-        const expenses = await Expenses.findAll();
-        const users = await Users.findAll();
-        const userAggregateExpenses = {};
-        expenses.forEach(expense => {
-            if(userAggregateExpenses[expense.userId]){
-                userAggregateExpenses[expense.userId] = userAggregateExpenses[expense.userId]+ expense.expense;
-            }
-            else{
-                userAggregateExpenses[expense.userId] = expense.expense;
-            }        
-        });     
-        var userLeaderBoardDetails = [];
-        users.forEach(user=>{
-            
-            userLeaderBoardDetails.push({name: user.name, expense: userAggregateExpenses[user.id]||0})
-        })
-        // console.log("user>>>>",userLeaderBoardDetails);
-        userLeaderBoardDetails.sort((a,b)=>b.expense-a.expense)
+        // const expenses = await Expenses.findAll();
+        
+        const userLeaderBoardDetails = await Users.findAll({
+            attributes: ['id', 'name', [sequelize.fn('sum', sequelize.col('expenses.expense')), 'total_expense']],
+            include:[
+                {
+                    model: Expenses,
+                    attribute:[]
+                }
+            ],
+            group: ['user.id'],
+            order: [['total_expense', 'DESC']]
+        });
+        
         res.status(201).json({expense: userLeaderBoardDetails})
     }
     catch(err){
