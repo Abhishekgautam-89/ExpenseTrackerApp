@@ -3,6 +3,7 @@ const logOut = document.getElementById('logout');
 const submit = document.getElementById("submit");
 const editBtn = document.getElementById("edit");
 const rzb = document.getElementById('rzp-button');
+const viewReport = document.getElementById('open');
 const leaderBoardButton = document.getElementById('leaderboard');
 
 document.addEventListener("DOMContentLoaded", async (e) => {
@@ -15,6 +16,7 @@ document.addEventListener("DOMContentLoaded", async (e) => {
     // console.log(getObject)
     for (var i = 0; i < getObject.data.allExpense.length; i++) {
       addDatatoList(getObject.data.allExpense[i]);
+      dataToReport(getObject.data.allExpense[i])
     }
 
     if (decodedToken.isPremium===true){
@@ -43,7 +45,7 @@ leaderBoardButton.addEventListener('click', leaderBoard);
 
 logOut.addEventListener('click', ()=>{
   localStorage.removeItem('token');
-  window.location.href('../views/login.html');
+  window.location.href='../views/login.html';
 })
 
 submit.addEventListener("click", async (e) => {
@@ -158,8 +160,7 @@ async function buyPremium(){
           payment_id: response.razorpay_payment_id
         }, {headers:{'Authorization': token}})
       alert('you are a premium user now');
-      rzb.style.display='none';
-      document.getElementById('display').style.display='block';
+      premiumFeature();
       localStorage.setItem('token', res.data.token)
       }
     }
@@ -200,4 +201,25 @@ function leaderBoardOnScreen(data){
     document.createTextNode(`Name: ${data.name}   Expense: ${data.total_expense}`)
   );
   ul.appendChild(li);
+}
+
+async function dataToReport(data){
+  // console.log(data);
+  const table = document.getElementById('report-table');
+  table.innerHTML+= `
+  <tr>
+  <td>${data.id}</td>
+  <td>${data.createdAt}</td>
+  <td>${data.option}</td>
+  <td>${data.description}</td>
+  <td>${data.expense}</td>
+</tr>
+  `
+  // table.appendChild(table_row);
+}
+
+function premiumFeature(){
+    rzb.style.display='none';
+      document.getElementById('display').style.display='block';
+      viewReport.style.display="block";
 }

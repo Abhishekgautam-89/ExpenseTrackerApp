@@ -17,57 +17,92 @@
       integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
       crossorigin="anonymous"
     ></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../public/report.css" />
+    <link rel="stylesheet" href="../public/style.css" />
   </head>
   <body>
     <div class="main">
-      <button id="logout">Log Out</button>
-      <div class="form">  
-    <div class="h-100 d-flex align-items-lg-center justify-content-center">
-      <label class="form-check-label">Choose Expense Amount</label>
-      <input class="input-group-text" type="text" name="expense" id="expense" />
-      <label class="form-check-label" for="">Choose Description </label>
-      <input
-        class="input-group-text"
-        type="text"
-        name="description"
-        id="desc"
-      />
-      <label class="form-check-label" for="">Choose a Category </label>
-      <select class="form-select-sm" name="category" id="category">
-        <option value="null" id="opt">Select Value</option>
-        <option value="Travel" id="opt">Travel</option>
-        <option value="Meal" id="opt">Meal</option>
-        <option value="Entertainment" id="opt">Entertainment</option>
-        <option value="Utility Bills" id="opt">Utility Bills</option>
-        <option value="Others" id="opt">Others</option>
-      </select>
-      <input
-        class="form-check-label"
-        type="submit"
-        value="Add Expense"
-        id="submit"
-      />
-    </div>
-      <!-- <input type="submit" value="Edit" id="edit" disabled="true" /> -->
-            
-          <button class="btn-link" id="rzp-button">Get Membership</button>
-          <h5 style="display:none;"id="display">You are a Premium user</h5>
-          <button class="btn-link" id="leaderboard" style="display: none;" >Show LeaderBoard</button>
-          <hr>
-          <ul id="expenseList">
-            <!-- <li>home</li>
+      
+      <button id="open" style="display: none">View Report </button>
+      <button class="" id="rzp-button">Get Membership</button>
+        <h5 style="display: none" id="display">You are a Premium user</h5>
+        <button class="btn-link" id="leaderboard" style="display: none">
+          Show LeaderBoard
+        </button>
+        <button id="logout">Log Out</button>
+      <div class="form">
+        <div class="h-100 d-flex align-items-lg-center justify-content-center">
+          <label class="form-check-label">Choose Expense Amount</label>
+          <input
+            class="input-group-text"
+            type="text"
+            name="expense"
+            id="expense"
+          />
+          <label class="form-check-label" for="">Choose Description </label>
+          <input
+            class="input-group-text"
+            type="text"
+            name="description"
+            id="desc"
+          />
+          <label class="form-check-label" for="">Choose a Category </label>
+          <select class="form-select-sm" name="category" id="category">
+            <option value="null" id="opt">Select Value</option>
+            <option value="Travel" id="opt">Travel</option>
+            <option value="Meal" id="opt">Meal</option>
+            <option value="Entertainment" id="opt">Entertainment</option>
+            <option value="Utility Bills" id="opt">Utility Bills</option>
+            <option value="Others" id="opt">Others</option>
+          </select>
+          <input
+            class="form-check-label"
+            type="submit"
+            value="Add Expense"
+            id="submit"
+          />
+        </div>
+        <!-- <input type="submit" value="Edit" id="edit" disabled="true" /> -->
+
+        
+        <hr />
+        <ul id="expenseList">
+          <!-- <li>home</li>
             <li>home</li>
             <li>home</li> -->
-          </ul>
-          <hr>
-          <ul id="leaderBoard"></ul>
-        </div>   
-    </div>   
+        </ul>
+        <hr />
+        <ul id="leaderBoard"></ul>
+      </div>
+
+    </div>
     
+    <div class="popup-container" id="table">
+      <div class="popup"  >
+        <table id="report-table">
+          <button id="close">X</button>
+          <tr>
+            <th>S.no</th>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Expense</th>
+          </tr>
+          <!-- <tr>
+          <td>1</td>
+          <td>112</td>
+          <td>1nbfs</td>
+          <td>dbfb</td>
+          <td>546</td>
+        </tr> -->
+      </table>
+      <button id="download">Download File</button>
+      </div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="../script/main.js"></script>
+    <script src="../script/style.js"></script>
   </body>
 </html>

@@ -1,0 +1,33 @@
+
+.table{
+    text-align: center; 
+    align-items: center;
+  }  
+  table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+td,
+th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+.download{
+  border: 1px solid burlywood;
+  background-color: rgba(54, 196, 59, 0.675);
+  color:black;
+  margin: 8px;
+  padding: 1rem;
+}
+.download :hover {
+  cursor: pointer;
+  background-color: black;
+  color: rgba(54, 196, 59, 0.675);;
+  
+}
