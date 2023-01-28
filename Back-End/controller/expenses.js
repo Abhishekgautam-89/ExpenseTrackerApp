@@ -1,4 +1,6 @@
 const Expense = require('../model/expense')
+const S3Service = require('../services/s3bucket.js')
+const ListOfUrl = require('../model/url');
 
 exports.addExpense = async(req, res, next)=>{
     try{
@@ -24,9 +26,11 @@ exports.getExpense = async (req, res, next)=>{
     
     try{
         user=req.user;
-        // console.log('user2>>>',user);
+        
         const data = await user.getExpenses();
-        res.status(200).json({allExpense:data})
+        const urlData = await ListOfUrl.findAll({where:{userId:user.id}});
+        // console.log('url>>>',data1);
+        res.status(200).json({allExpense:data, listOfUrls: urlData})
     }
     catch(err){
         console.log(err);
@@ -65,3 +69,21 @@ exports.updateExpense = async(req, res, next)=>{
         res.status(500).json({error:err})
     }
 }
+
+exports.downloadExpense = async(req, res, next)=>{
+    try {
+        const expenses = await req.user.getExpenses();
+        const stringifiedExpense = JSON.stringify(expenses);
+        const fileName = `Expense${req.user.id}/${new Date() }.txt`
+        const fileURL =  await S3Service.uploadToS3(stringifiedExpense, fileName);
+        // console.log(fileURL, req.user.name);
+        await ListOfUrl.create({url: fileURL, userId: req.user.id})
+        
+        res.status(201).json({success: true, URL: fileURL });
+    }
+    catch(err){
+        res.status(500).json({success:false, err})
+    }
+   
+}
+

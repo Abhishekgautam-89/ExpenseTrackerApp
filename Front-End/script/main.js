@@ -5,6 +5,7 @@ const editBtn = document.getElementById("edit");
 const rzb = document.getElementById('rzp-button');
 const viewReport = document.getElementById('open');
 const leaderBoardButton = document.getElementById('leaderboard');
+const download = document.getElementById('download');
 
 document.addEventListener("DOMContentLoaded", async (e) => {
 
@@ -13,11 +14,14 @@ document.addEventListener("DOMContentLoaded", async (e) => {
   // console.log(decodedToken);
   try {
     const getObject = await axios.get("http://localhost:3000/getexpense",{headers: {'Authorization': token}});
-    // console.log(getObject)
-    for (var i = 0; i < getObject.data.allExpense.length; i++) {
+    console.log(getObject.data.listOfUrls)
+    for (let i = 0; i < getObject.data.allExpense.length; i++) {
       addDatatoList(getObject.data.allExpense[i]);
       dataToReport(getObject.data.allExpense[i])
     }
+    for (let i = 0; i < getObject.data.listOfUrls.length; i++){ 
+      listOfUrls(getObject.data.listOfUrls[i]);
+    };
 
     if (decodedToken.isPremium===true){
       rzb.style.display='none';
@@ -30,13 +34,15 @@ document.addEventListener("DOMContentLoaded", async (e) => {
   }
 });
 
+download.addEventListener('click', downloadReport);
+
 function parseJwt (token) {
   var base64Url = token.split('.')[1];
   var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
   var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
       return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
   }).join(''));
-
+  
   return JSON.parse(jsonPayload);
 }
 
@@ -49,6 +55,7 @@ logOut.addEventListener('click', ()=>{
 })
 
 submit.addEventListener("click", async (e) => {
+  // console.log('clicked')
   e.preventDefault();
   const expense = document.getElementById("expense").value;
   const description = document.getElementById("desc").value;
@@ -222,4 +229,32 @@ function premiumFeature(){
     rzb.style.display='none';
       document.getElementById('display').style.display='block';
       viewReport.style.display="block";
+}
+
+async function downloadReport(){
+  try{
+    const token = localStorage.getItem('token');
+    const data = await axios.get('http://localhost:3000/download',{headers:{'Authorization':token}})
+    // console.log(data);
+      if (data.status===201){
+        var a= document.createElement('a');
+        a.href=data.data.URL;
+        a.download='fileExpense.csv';
+        a.click();
+      }
+      else{ 
+         throw new Error(data.data.message)
+      }
+  }
+  catch (err){
+    console.log(err)
+  }
+}
+
+function listOfUrls(data){
+    const urlList = document.getElementById('urlList');
+    var date = new Date(data.createdAt)
+    urlList.innerHTML+=`
+    <li><a href="${data.url}" download='fileExpense.csv' >Last Download On: ${date}</a></li> 
+    `
 }
