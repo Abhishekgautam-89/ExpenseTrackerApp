@@ -28,15 +28,25 @@ exports.getExpense = async (req, res, next)=>{
         user=req.user;
         page=req.query.page||1;
         // console.log(page);
-        const itemPerPage = 1;
 
+        const itemPerPage = parseInt(req.header("page")||2);
+        // console.log("page>>>",itemPerPage)
+        const totalExpenseList = await user.countExpenses();        
         const data = await user.getExpenses({
             offset: ((page-1)*itemPerPage),
             limit:  itemPerPage
         });
         const urlData = await ListOfUrl.findAll({where:{userId:user.id}});
         // console.log('url>>>',data1);
-        res.status(200).json({allExpense:data, listOfUrls: urlData})
+        res.status(200).json({allExpense:data, 
+            listOfUrls: urlData,
+            hasNextPage: totalExpenseList>page*itemPerPage,            
+            nextPage: parseInt(page)+1,
+            currentPage: parseInt(page),
+            hasPreviousPage: page>1,
+            previousPage: parseInt(page)-1,
+            lastPage: Math.ceil(totalExpenseList/itemPerPage)
+        })
     }
     catch(err){
         console.log(err);

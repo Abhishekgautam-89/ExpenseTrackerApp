@@ -1,9 +1,9 @@
-const open = document.getElementById('open');
+const viewreport = document.getElementById('viewReport');
 const close = document.getElementById('close');
 const container = document.getElementById('table');
 
 
-open.addEventListener('click',()=>{
+viewreport.addEventListener('click',()=>{
     // console.log('clicked')
     container.classList.add('active');
 })   

@@ -5,6 +5,7 @@ const rzb = document.getElementById("rzp-button");
 const viewReport = document.getElementById("viewReport");
 const leaderBoardButton = document.getElementById("leaderboard");
 const download = document.getElementById("download");
+var itemsPerPage = document.getElementById('itemsPerPage');
 
 download.addEventListener("click", downloadReport);
 rzb.addEventListener("click", buyPremium);
@@ -35,12 +36,12 @@ function parseJwt(token) {
   return JSON.parse(jsonPayload);
 }
 
-document.getElementById("page1").addEventListener("click", () => {
-  getExpense(1);
-});
-document.getElementById("page2").addEventListener("click", () => {
-  getExpense(2);
-});
+// document.getElementById("page1").addEventListener("click", () => {
+//   getExpense(1);
+// });
+// document.getElementById("page2").addEventListener("click", () => {
+//   getExpense(2);
+// });
 
 submit.addEventListener("click", async (e) => {
   // console.log('clicked')
@@ -73,12 +74,12 @@ function addDatatoList(obj) {
   var li = document.createElement("li");
   //var edit = document.createElement("button");
   var del = document.createElement("button");
-  list.innerHTML = " "
+  // list.innerHTML = " "
   li.appendChild(
     document.createTextNode(`${obj.expense} ${obj.description} ${obj.option}`)
   );
   li.id = obj.id;
-
+    
   //   edit.appendChild(document.createTextNode("Edit"));
   del.appendChild(document.createTextNode("Delete"));
 
@@ -147,24 +148,38 @@ async function getExpense(page) {
   const token = localStorage.getItem("token");
   const decodedToken = parseJwt(token);
   // console.log(decodedToken);
+  
+   const value=localStorage.getItem("page")
+  // console.log(value);
   try {
     const getObject = await axios.get(
       `http://localhost:3000/getexpense?page=${page}`,
-      { headers: { Authorization: token } }
+      { headers: { Authorization: token, page:value } }
     );
     // console.log(getObject.data.listOfUrls);
+    document.getElementById("report-table").innerHTML = " ";
+    document.getElementById("expenseList").innerHTML = " ";
+
     for (let i = 0; i < getObject.data.allExpense.length; i++) {
+      
       addDatatoList(getObject.data.allExpense[i]);
       dataToReport(getObject.data.allExpense[i]);
     }
 
     document.getElementById("urlList").innerHTML = " "
+   
 
     for (let i = 0; i < getObject.data.listOfUrls.length; i++) {
       listOfUrls(getObject.data.listOfUrls[i]);
-    }
-
-    
+    }    
+    showPagination(      
+      getObject.data.currentPage,
+      getObject.data.hasNextPage,
+      getObject.data.nextPage,
+      getObject.data.hasPreviousPage,
+      getObject.data.previousPage,
+      getObject.data.lastPage
+    );
 
     if (decodedToken.isPremium === true) {
       rzb.style.display = "none";
@@ -175,6 +190,13 @@ async function getExpense(page) {
     console.log(`Something goes wrong and gives this error: ${reject} `);
   }
 }
+
+var itemsPerPageOptions = document.getElementById('itemsPerPageOptions')
+itemsPerPageOptions.addEventListener('change',()=>{
+  const value = itemsPerPageOptions.value||20    
+  localStorage.setItem("page", value); 
+  getExpense(1)
+})
 
 async function buyPremium() {
   try {
@@ -245,7 +267,7 @@ function leaderBoardOnScreen(data) {
 async function dataToReport(data) {
   // console.log(data);
   const table = document.getElementById("report-table");
-  table.innerHTML = " "
+  
   table.innerHTML += `
   <tr>
   <td>${data.id}</td>
@@ -291,6 +313,56 @@ function listOfUrls(data) {
   urlList.innerHTML += `
     <li><a href="${data.url}" download='fileExpense.csv' >Last Download On: ${date}</a></li> 
     `;
+}
+
+function showPagination(
+  currentPage,  
+  hasNextPage,
+  nextPage,
+  hasPreviousPage,
+  previousPage,
+  lastPage
+) {
+  pagination.innerHTML = " ";
+
+  const button4 = document.createElement('button');
+  button4.classList.add("active");
+  button4.innerHTML = `<h3>First Page<h3>`;
+  button4.addEventListener("click", () => getExpense(1));
+  pagination.appendChild(button4);
+
+  if (hasPreviousPage) {
+    const button2 = document.createElement("button");
+    button2.classList.add("active");
+    button2.innerHTML = previousPage;
+    console.log(previousPage);
+    button2.addEventListener("click", () => getExpense(previousPage));
+    pagination.appendChild(button2);
+  } 
+
+  const button1 = document.createElement("button");
+  button1.classList.add("active");
+  button1.innerHTML = `<h3>${currentPage}<h3>`;
+
+  button1.addEventListener("click", () => getExpense(currentPage));
+  pagination.appendChild(button1);
+
+  
+
+  if (hasNextPage) {
+    const button3 = document.createElement("button");
+    button3.classList.add("active");
+    button3.innerHTML = nextPage;
+    button3.addEventListener("click", () => getExpense(nextPage));
+    pagination.appendChild(button3);
+  }
+
+  const button5 = document.createElement('button');
+  button5.classList.add("active");
+  button5.innerHTML = `<h3>Last Page<h3>`;
+  button5.addEventListener("click", () => getExpense(lastPage));
+  pagination.appendChild(button5);
+
 }
 
 

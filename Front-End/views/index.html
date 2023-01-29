@@ -64,7 +64,8 @@
         <!-- <input type="submit" value="Edit" id="edit" disabled="true" /> -->
 
         <hr />
-        <ul id="expenseList">
+        <ul class="expenseList"  id="expenseList">
+                  
           <!-- <li>home</li>
             <li>home</li>
             <li>home</li> -->
@@ -76,6 +77,15 @@
 
     <div class="popup-container" id="table">
       <div class="popup">
+        <div class="itemsPerPage" id="itemsPerPage" >
+          <label for="">Rows Per Page:</label>
+          <select class="itemsPerPageOptions" name="" id="itemsPerPageOptions">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+          </select>
+        </div>
         <table id="report-table">
           <button id="close">X</button>
           <tr>
@@ -94,8 +104,8 @@
         </tr> -->
         </table>
         <div id="pagination" class="pagination">
-          <button id="page1" >1</button>
-          <button id="page2" >2</button>
+          <!-- <button id="page1" >1</button>
+          <button id="page2" >2</button> -->
         </div>
         <button id="download">Download File</button>
         <p>Previous Downloads:</p>
