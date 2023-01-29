@@ -1,58 +1,46 @@
-
-const logOut = document.getElementById('logout');
+const logOut = document.getElementById("logout");
 const submit = document.getElementById("submit");
 const editBtn = document.getElementById("edit");
-const rzb = document.getElementById('rzp-button');
-const viewReport = document.getElementById('open');
-const leaderBoardButton = document.getElementById('leaderboard');
-const download = document.getElementById('download');
+const rzb = document.getElementById("rzp-button");
+const viewReport = document.getElementById("viewReport");
+const leaderBoardButton = document.getElementById("leaderboard");
+const download = document.getElementById("download");
 
-document.addEventListener("DOMContentLoaded", async (e) => {
+download.addEventListener("click", downloadReport);
+rzb.addEventListener("click", buyPremium);
+leaderBoardButton.addEventListener("click", leaderBoard);
 
-  const token = localStorage.getItem('token');
-  const decodedToken = parseJwt(token);
-  // console.log(decodedToken);
-  try {
-    const getObject = await axios.get("http://localhost:3000/getexpense",{headers: {'Authorization': token}});
-    console.log(getObject.data.listOfUrls)
-    for (let i = 0; i < getObject.data.allExpense.length; i++) {
-      addDatatoList(getObject.data.allExpense[i]);
-      dataToReport(getObject.data.allExpense[i])
-    }
-    for (let i = 0; i < getObject.data.listOfUrls.length; i++){ 
-      listOfUrls(getObject.data.listOfUrls[i]);
-    };
-
-    if (decodedToken.isPremium===true){
-      rzb.style.display='none';
-      document.getElementById('display').style.display='block';
-      document.getElementById('leaderboard').style.display='block';
-    }
-
-  } catch (reject) {
-    console.log(`Something goes wrong and gives this error: ${reject} `);
-  }
+logOut.addEventListener("click", () => {
+  localStorage.removeItem("token");
+  window.location.href = "../views/login.html";
+});
+document.addEventListener("DOMContentLoaded", (e) => {
+  let page = 1;
+  getExpense(page);
 });
 
-download.addEventListener('click', downloadReport);
+function parseJwt(token) {
+  var base64Url = token.split(".")[1];
+  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  var jsonPayload = decodeURIComponent(
+    window
+      .atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
 
-function parseJwt (token) {
-  var base64Url = token.split('.')[1];
-  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-  }).join(''));
-  
   return JSON.parse(jsonPayload);
 }
 
-rzb.addEventListener('click', buyPremium);
-leaderBoardButton.addEventListener('click', leaderBoard);
-
-logOut.addEventListener('click', ()=>{
-  localStorage.removeItem('token');
-  window.location.href='../views/login.html';
-})
+document.getElementById("page1").addEventListener("click", () => {
+  getExpense(1);
+});
+document.getElementById("page2").addEventListener("click", () => {
+  getExpense(2);
+});
 
 submit.addEventListener("click", async (e) => {
   // console.log('clicked')
@@ -69,8 +57,10 @@ submit.addEventListener("click", async (e) => {
 
   addDatatoList(obj);
   try {
-    const token = localStorage.getItem('token');
-    let postObject = await axios.post("http://localhost:3000/addexpense", obj, {headers: {'Authorization': token}});
+    const token = localStorage.getItem("token");
+    let postObject = await axios.post("http://localhost:3000/addexpense", obj, {
+      headers: { Authorization: token },
+    });
     // console.log(postObject.data);
     addDatatoList(postObject.data);
   } catch (error) {
@@ -81,31 +71,31 @@ submit.addEventListener("click", async (e) => {
 function addDatatoList(obj) {
   var list = document.getElementById("expenseList");
   var li = document.createElement("li");
-//var edit = document.createElement("button");
+  //var edit = document.createElement("button");
   var del = document.createElement("button");
-
+  list.innerHTML = " "
   li.appendChild(
     document.createTextNode(`${obj.expense} ${obj.description} ${obj.option}`)
   );
   li.id = obj.id;
 
-//   edit.appendChild(document.createTextNode("Edit"));
-  del.appendChild(document.createTextNode("Delete"));  
+  //   edit.appendChild(document.createTextNode("Edit"));
+  del.appendChild(document.createTextNode("Delete"));
 
-//   edit.addEventListener("click", () => {
-//     document.getElementById("desc").value = obj.description;
-//     document.getElementById("expense").value = obj.expense;
-//     document.getElementById("opt").value = obj.option;
-//     // li.remove();
-//     // localStorage.removeItem(obj.description);
-//     editBtn.disabled = false;
-    
-//     editBtn.addEventListener("click", () => {
-//       editList();
-//     });
-//   });
+  //   edit.addEventListener("click", () => {
+  //     document.getElementById("desc").value = obj.description;
+  //     document.getElementById("expense").value = obj.expense;
+  //     document.getElementById("opt").value = obj.option;
+  //     // li.remove();
+  //     // localStorage.removeItem(obj.description);
+  //     editBtn.disabled = false;
 
-//   li.appendChild(edit);
+  //     editBtn.addEventListener("click", () => {
+  //       editList();
+  //     });
+  //   });
+
+  //   li.appendChild(edit);
   li.appendChild(del);
 
   del.addEventListener("click", () => {
@@ -116,12 +106,13 @@ function addDatatoList(obj) {
 }
 
 async function deleteList(id) {
- 
   // console.log('delete-clicked')
   try {
-    const token = localStorage.getItem('token');
-    
-    const delObj = await axios.delete(`http://localhost:3000/delete/${id}`, {headers: {'Authorization': token}});
+    const token = localStorage.getItem("token");
+
+    const delObj = await axios.delete(`http://localhost:3000/delete/${id}`, {
+      headers: { Authorization: token },
+    });
     li.remove();
   } catch (error) {
     console.log(error);
@@ -152,68 +143,110 @@ async function editList(id) {
   }
 }
 
-async function buyPremium(){
-  try{
-    const token = localStorage.getItem('token');
-    const res = await axios.get('http://localhost:3000/getPremium', {headers:{'Authorization': token}})
+async function getExpense(page) {
+  const token = localStorage.getItem("token");
+  const decodedToken = parseJwt(token);
+  // console.log(decodedToken);
+  try {
+    const getObject = await axios.get(
+      `http://localhost:3000/getexpense?page=${page}`,
+      { headers: { Authorization: token } }
+    );
+    // console.log(getObject.data.listOfUrls);
+    for (let i = 0; i < getObject.data.allExpense.length; i++) {
+      addDatatoList(getObject.data.allExpense[i]);
+      dataToReport(getObject.data.allExpense[i]);
+    }
+
+    document.getElementById("urlList").innerHTML = " "
+
+    for (let i = 0; i < getObject.data.listOfUrls.length; i++) {
+      listOfUrls(getObject.data.listOfUrls[i]);
+    }
+
+    
+
+    if (decodedToken.isPremium === true) {
+      rzb.style.display = "none";
+      document.getElementById("display").style.display = "block";
+      document.getElementById("leaderboard").style.display = "block";
+    }
+  } catch (reject) {
+    console.log(`Something goes wrong and gives this error: ${reject} `);
+  }
+}
+
+async function buyPremium() {
+  try {
+    const token = localStorage.getItem("token");
+    const res = await axios.get("http://localhost:3000/getPremium", {
+      headers: { Authorization: token },
+    });
     // console.log(res);
     var options = {
-      'keys' : res.data.key_id,
-      'order_id': res.data.order.id,
-      'handler': async (response)=>{
+      keys: res.data.key_id,
+      order_id: res.data.order.id,
+      handler: async (response) => {
         // console.log(options.order_id);
-        const res = await axios.post('http://localhost:3000/updateStatus',{
-          order_id:options.order_id,
-          payment_id: response.razorpay_payment_id
-        }, {headers:{'Authorization': token}})
-      alert('you are a premium user now');
-      premiumFeature();
-      localStorage.setItem('token', res.data.token)
-      }
-    }
+        const res = await axios.post(
+          "http://localhost:3000/updateStatus",
+          {
+            order_id: options.order_id,
+            payment_id: response.razorpay_payment_id,
+          },
+          { headers: { Authorization: token } }
+        );
+        alert("you are a premium user now");
+        premiumFeature();
+        localStorage.setItem("token", res.data.token);
+      },
+    };
     const rzp = new Razorpay(options);
     rzp.open();
 
-    rzp.on('payment.failed', function(response){
+    rzp.on("payment.failed", function (response) {
       console.log(response);
-      alert('something went wrong');
-    })
-  }
-  catch(err){
+      alert("something went wrong");
+    });
+  } catch (err) {
     console.log(err);
-    }
+  }
 }
 
-async function leaderBoard(){
-  try{
-    const token = localStorage.getItem('token');
-    const data = await axios.get('http://localhost:3000/premium/showLeaderboard',{headers:{'Authorization': token}} );
+async function leaderBoard() {
+  try {
+    const token = localStorage.getItem("token");
+    const data = await axios.get(
+      "http://localhost:3000/premium/showLeaderboard",
+      { headers: { Authorization: token } }
+    );
     // console.log(data.data.expense);
-    const lists=data.data.expense;
-    lists.forEach(list => {
+    const lists = data.data.expense;
+    lists.forEach((list) => {
       leaderBoardOnScreen(list);
     });
-    
-  }
-  catch(err){
+  } catch (err) {
     console.log(err);
   }
 }
 
-function leaderBoardOnScreen(data){
+function leaderBoardOnScreen(data) {
   console.log(data);
-  const ul = document.getElementById('leaderBoard');
+  const ul = document.getElementById("leaderBoard");
   const li = document.createElement("li");
   li.appendChild(
-    document.createTextNode(`Name: ${data.name}   Expense: ${data.total_expense}`)
+    document.createTextNode(
+      `Name: ${data.name}   Expense: ${data.total_expense}`
+    )
   );
   ul.appendChild(li);
 }
 
-async function dataToReport(data){
+async function dataToReport(data) {
   // console.log(data);
-  const table = document.getElementById('report-table');
-  table.innerHTML+= `
+  const table = document.getElementById("report-table");
+  table.innerHTML = " "
+  table.innerHTML += `
   <tr>
   <td>${data.id}</td>
   <td>${data.createdAt}</td>
@@ -221,40 +254,43 @@ async function dataToReport(data){
   <td>${data.description}</td>
   <td>${data.expense}</td>
 </tr>
-  `
+  `;
   // table.appendChild(table_row);
 }
 
-function premiumFeature(){
-    rzb.style.display='none';
-      document.getElementById('display').style.display='block';
-      viewReport.style.display="block";
+function premiumFeature() {
+  rzb.style.display = "none";
+  document.getElementById("display").style.display = "block";
+  viewReport.style.display = "block";
 }
 
-async function downloadReport(){
-  try{
-    const token = localStorage.getItem('token');
-    const data = await axios.get('http://localhost:3000/download',{headers:{'Authorization':token}})
+async function downloadReport() {
+  try {
+    const token = localStorage.getItem("token");
+    const data = await axios.get("http://localhost:3000/download", {
+      headers: { Authorization: token },
+    });
     // console.log(data);
-      if (data.status===201){
-        var a= document.createElement('a');
-        a.href=data.data.URL;
-        a.download='fileExpense.csv';
-        a.click();
-      }
-      else{ 
-         throw new Error(data.data.message)
-      }
-  }
-  catch (err){
-    console.log(err)
+    if (data.status === 201) {
+      var a = document.createElement("a");
+      a.href = data.data.URL;
+      a.download = "fileExpense.csv";
+      a.click();
+    } else {
+      throw new Error(data.data.message);
+    }
+  } catch (err) {
+    console.log(err);
   }
 }
 
-function listOfUrls(data){
-    const urlList = document.getElementById('urlList');
-    var date = new Date(data.createdAt)
-    urlList.innerHTML+=`
+function listOfUrls(data) {
+  const urlList = document.getElementById("urlList");
+  var date = new Date(data.createdAt);
+  // urlList.innerHTML = " "
+  urlList.innerHTML += `
     <li><a href="${data.url}" download='fileExpense.csv' >Last Download On: ${date}</a></li> 
-    `
+    `;
 }
+
+

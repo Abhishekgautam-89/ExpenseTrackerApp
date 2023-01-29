@@ -26,8 +26,14 @@ exports.getExpense = async (req, res, next)=>{
     
     try{
         user=req.user;
-        
-        const data = await user.getExpenses();
+        page=req.query.page||1;
+        // console.log(page);
+        const itemPerPage = 1;
+
+        const data = await user.getExpenses({
+            offset: ((page-1)*itemPerPage),
+            limit:  itemPerPage
+        });
         const urlData = await ListOfUrl.findAll({where:{userId:user.id}});
         // console.log('url>>>',data1);
         res.status(200).json({allExpense:data, listOfUrls: urlData})
