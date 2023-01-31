@@ -4,6 +4,11 @@ const sequelize = require('./util/database');
 const app = express();
 const cors = require('cors');
 const dotenv = require('dotenv');
+const helmet = require('helmet'); // to secure hhtp headers
+const morgan = require('morgan'); // to configure logg
+
+const path = require('path');
+const fs = require('fs');
 
 // routes
 const getExpenseroute = require('./routes/expenseAdded')
@@ -19,12 +24,14 @@ const Order = require('./model/orders');
 const forgotPassword = require('./model/forgotpassword');
 const urlList = require('./model/url');
 
+const accessLog = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags:'a'});
 
-// app.use('/',(req,res,next)=>{
-//     res.send('<h3>server created</h3>')
-// } )
 
 dotenv.config();
+// console.log(process.env)
+app.use(helmet());
+app.use(morgan('combined', {stream: accessLog}))
+
 app.use(bodyparser.json({extended:false}))
 app.use(cors());
 
@@ -50,7 +57,7 @@ sequelize
 .sync()
 .then((result)=>{
     // console.log(result);
-    app.listen(3000); 
+    app.listen(process.env.PORT||3000); 
 })
 .catch(err=>console.log(err));
 

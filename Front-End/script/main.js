@@ -148,7 +148,7 @@ async function getExpense(page) {
   const token = localStorage.getItem("token");
   const decodedToken = parseJwt(token);
   // console.log(decodedToken);
-  
+  //to get no.of rows per page
    const value=localStorage.getItem("page")
   // console.log(value);
   try {

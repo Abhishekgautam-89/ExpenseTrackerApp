@@ -6,7 +6,7 @@ const addUser = (req,res,next)=>{
     const userName = req.body.userName;
     const userEmail= req.body.userEmail;
     const userPassword = req.body.userPassword;
-    const salt=11;
+    const salt=process.env.SALT;
     try{    
         bcrypt.hash(userPassword, salt, async(err, hash)=>{
             console.log(err);
